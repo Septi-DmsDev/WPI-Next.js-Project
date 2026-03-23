@@ -1,0 +1,77 @@
+wpi-internasional/
+└── src/
+    ├── app/
+    │   ├── (storefront)/         # Area Publik (Bisa diakses tanpa login)
+    │   │   ├── layout.js         # Header & Footer utama (yang tadi kita buat)
+    │   │   ├── page.js           # Homepage (Katalog Produk)
+    │   │   ├── order/[slug]/     # Halaman Detail Produk & Kalkulator
+    │   │   │   └── page.js       
+    │   │   └── upload/           # Halaman Upload Desain
+    │   │       └── page.js       
+    │   ├── (dashboard)/          # Area Klien (Wajib Login)
+    │   │   ├── layout.js         # Sidebar menu klien
+    │   │   └── page.js           # Halaman Tracking Order utama
+    │   ├── api/                  # Route Handlers (Untuk Webhook/Logic Backend)
+    │   ├── globals.css           # File CSS utama (Tailwind di-load di sini)
+    │   └── layout.js             # Root Layout (Wajib ada, bawaan Next.js)
+    ├── components/               # Komponen UI Reusable (Dipakai berulang)
+    │   ├── ui/                   # Folder ini akan OTOMATIS terisi oleh Shadcn UI
+    │   └── custom/               # Komponen buatan tim (ProductCard, KalkulatorOrder)
+    ├── lib/                      # Utilitas & Helper
+    │   ├── supabase.js           # Script koneksi ke database Supabase
+    │   └── utils.js              # Helper seperti formatRupiah (otomatis dari Shadcn)
+    └── store/                    # State Management (Zustand)
+        └── cartStore.js          # File penyimpan data keranjang sementara
+
+
+        Berikut adalah peta jalan full kita beserta statusnya:
+
+🟢 Fase 1: Fondasi UI & Database (SELESAI)
+Target: Membuat arsitektur App Router (storefront), layouting, dan koneksi Supabase.
+
+Analogi PHP: Setup struktur folder /public, header.php, koneksi.php, dan SELECT * FROM produk.
+
+Status: Selesai. Data produk sudah dinamis.
+
+🟢 Fase 2: Mesin Kalkulator Interaktif (SELESAI)
+Target: Kalkulasi harga real-time dengan Zustand tanpa membebani server.
+
+Analogi PHP: Menggunakan $_SESSION di memori browser klien, menggantikan proses submit form POST yang butuh reload halaman.
+
+Status: Selesai. Kalkulator berjalan instan.
+
+🟡 Fase 3: Direct Upload & State Handoff (SEDANG BERJALAN)
+Target: Mengamankan file desain klien langsung ke Supabase Storage.
+
+Analogi PHP: Menggantikan proses lambat move_uploaded_file() di VPS dengan lempar langsung ke Cloud Storage agar disk VPS Anda tidak cepat penuh.
+
+Status: Sedang kita eksekusi sekarang.
+
+🎯 Fase 4: Server Actions & Checkout (Target Berikutnya)
+Ini adalah fase paling krusial untuk keamanan.
+
+Target: Memvalidasi ulang harga kalkulator, menyimpan order ke tabel transaksi, dan melempar user ke WhatsApp Admin (atau Midtrans jika Anda mau).
+
+Analogi PHP: Ini adalah proses validasi backend (Validasi $_POST). Jika di Fase 2 user nakal mencoba mengubah harga total menjadi Rp 0 via Inspect Element, di Fase 4 ini Server Actions Next.js akan menghitung ulang harganya murni dari database sebelum disimpan. Tidak bisa diakali.
+
+Trade-off: Membutuhkan penulisan logic matematika dua kali (satu di frontend Zustand untuk UI, satu di backend Server Actions untuk keamanan).
+
+🎯 Fase 5: Area Dashboard Klien (Opsional untuk MVP Awal)
+Target: Membuat folder (dashboard) yang wajib login agar klien bisa melihat status pesanan mereka (Pending, Proses Cetak, Dikirim).
+
+Analogi PHP: Membuat folder /admin atau /member dengan pengecekan if(!isset($_SESSION['user_id'])) { redirect... }.
+
+Teknologi: Kita akan menggunakan Supabase Auth.
+
+🚀 Fase 6: Deployment ke VPS Ubuntu (Final)
+Karena Anda secara spesifik menolak Vercel dan memilih VPS sendiri demi efisiensi biaya operasional jangka panjang, langkahnya akan seperti ini:
+
+Langkah 1: Build Production: Menjalankan npm run build untuk mengubah seluruh kodingan React menjadi HTML/JS statis dan Node.js server yang super cepat.
+
+Langkah 2: PM2 Setup: Menggunakan PM2 di Ubuntu agar aplikasi Next.js Anda tetap menyala 24/7 di background meskipun terminal VPS ditutup.
+
+Langkah 3: Nginx Reverse Proxy: Mengatur Nginx agar domain wpi-internasional.com (Port 80/443) mengarah ke localhost Next.js (Port 3000).
+
+Trade-off: Anda harus mengurus sertifikat SSL (HTTPS) secara manual dengan Certbot/Let's Encrypt, yang biasanya otomatis jika menggunakan Vercel.
+
+Semua roadmap ini dirancang agar aplikasi Anda Scalable. Saat tim IT Anda kedatangan anggota baru (seperti Daniar), atau ada tim dari Zavier Invitation yang ikut membantu, mereka bisa membaca alur folder dan logic ini dengan sangat mudah.

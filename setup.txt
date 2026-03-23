@@ -1,0 +1,11 @@
+# 1. Inisiasi Next.js dengan konfigurasi spesifik (tekan Enter jika ada konfirmasi default)
+npx create-next-app@latest wpi-internasional --javascript --tailwind --eslint --app --src-dir --import-alias "@/*"
+
+# 2. Masuk ke direktori proyek
+cd wpi-internasional
+
+# 3. Inisiasi Shadcn UI (Pilih style: "Default", color: "Slate", CSS variables: "Yes")
+npx shadcn@latest init
+
+# 4. Install dependencies tambahan untuk state management (Zustand) dan database (Supabase)
+npm install zustand @supabase/supabase-js
